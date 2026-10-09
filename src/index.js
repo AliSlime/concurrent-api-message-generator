@@ -120,9 +120,20 @@ function main() {
 	try {
 		const options = parseArgs(process.argv.slice(2));
 		const config = validateArgs(options);
-		console.log(config);
+
+		const url = `http://localhost:${config.port}${config.endpoint}`;
+
+		console.info(`
+	Message Generator
+-------------------------------
+Target:		${url}
+Requests:	${config.requests}
+Concurrency:	${config.concurrency}
+Payload: 	~${config.payload} bytes`);
 	} catch (error) {
-		console.log(error);
+		console.error(`Error: ${error.message}`);
+		console.error(`Use --help to see how to use.`);
+		process.exit(1);
 	}
 }
 

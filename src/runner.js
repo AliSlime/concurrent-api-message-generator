@@ -3,10 +3,17 @@ export async function run({ totalRequests, concurrency, task }) {
 
 	let requestNumber = 0;
 	async function worker() {
-		results[requestNumber++] = await task();
+		while (true) {
+			if (requestNumber >= totalRequests) return;
+			results[requestNumber++] = await task();
+		}
 	}
 
-	await Promise.all(Array.from({ length: totalRequests }, () => worker()));
+	await Promise.all(
+		Array.from({ length: Math.min(totalRequests, concurrency) }, () =>
+			worker(),
+		),
+	);
 
 	return results;
 }

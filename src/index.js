@@ -142,7 +142,7 @@ Payload: 	~${config.payload} bytes`);
 
 		const results = await run({
 			totalRequests: config.requests,
-			conscurrency: config.concurrency,
+			concurrency: config.concurrency,
 			task: async () => {
 				await delay(100); // 10 requests should run for about 1 second
 				console.count("Request");

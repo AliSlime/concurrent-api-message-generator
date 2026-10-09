@@ -1,5 +1,6 @@
 import { sendRequest } from "./client.js";
 import { run } from "./runner.js";
+import { createPayload } from "./payload.js";
 
 function printHelp() {
 	console.log(`
@@ -139,8 +140,8 @@ Payload: 	~${config.payload} bytes`);
 		const results = await run({
 			totalRequests: config.requests,
 			concurrency: config.concurrency,
-			task: async () => {
-				const payload = ":3"; //testing
+			task: async (requestNumber) => {
+				const payload = createPayload(requestNumber, config.payload);
 
 				return sendRequest({
 					url,

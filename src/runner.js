@@ -8,7 +8,7 @@ export async function run({ totalRequests, concurrency, task }) {
 			if (requestNumber >= totalRequests) return;
 
 			try {
-				results[requestNumber] = await task();
+				results[requestNumber] = await task(requestNumber);
 			} catch (error) {
 				results[requestNumber] = {
 					ok: false,

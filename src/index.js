@@ -9,6 +9,14 @@ Message Generator
 Usage:
   node src/index.js [options]
 
+Options:
+  --api-key <string>       API key (required)
+  --endpoint <path>        API endpoint (required)
+  --port <number>          API port
+  --concurrency <number>   Maximum concurrent requests (1-500)
+  --requests <number>      Total number of requests
+  --payload <number>       Total size of the payload in bytes
+
 Example:
   node src/index.js \\
     --port 3000 \\
@@ -120,6 +128,54 @@ function validateArgs(options) {
 	};
 }
 
+function printResults(results, config, durationTime) {
+	const successful = results.filter((result) => result.ok).length;
+	const failed = results.length - successful;
+
+	const responseTimes = results.map((result) => result.durationTime);
+	const averageResponseTime =
+		responseTimes.length > 0
+			? responseTimes.reduce((sum, time) => sum + time, 0) /
+				responseTimes.length
+			: 0;
+
+	const statusCounts = {};
+	for (const result of results) {
+		if (result.status !== null) {
+			statusCounts[result.status] =
+				(statusCounts[result.status] ?? 0) + 1;
+		}
+	}
+
+	console.log(`
+Results
+-------------------------------
+Successful:   ${successful}
+Failed:       ${failed}
+Duration:     ${(durationTime / 1000).toFixed(2)}s
+Average:      ${averageResponseTime.toFixed(2)}ms
+
+HTTP Statuses
+-------------------------------`);
+
+	if (Object.keys(statusCounts).length === 0) {
+		console.log("No HTTP responses received");
+	} else {
+		for (const status in statusCounts) {
+			console.log(`${status}:		${statusCounts[status]}`);
+		}
+	}
+
+	console.log(`
+Configuration
+-------------------------------
+Target:       http://localhost:${config.port}${config.endpoint}
+Requests:     ${config.requests}
+Concurrency:  ${config.concurrency}
+Payload:      ~${config.payload} bytes
+`);
+}
+
 async function main() {
 	try {
 		const options = parseArgs(process.argv.slice(2));
@@ -128,7 +184,7 @@ async function main() {
 		const url = `http://localhost:${config.port}${config.endpoint}`;
 
 		console.info(`
-	Message Generator
+Message Generator
 -------------------------------
 Target:		${url}
 Requests:	${config.requests}
@@ -153,8 +209,7 @@ Payload: 	~${config.payload} bytes`);
 
 		const durationTime = performance.now() - startTime;
 
-		console.log(durationTime);
-		console.dir(results);
+		printResults(results, config, durationTime);
 	} catch (error) {
 		console.error(`Error: ${error.message}`);
 		console.error(`Use --help to see how to use.`);

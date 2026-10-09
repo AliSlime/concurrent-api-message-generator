@@ -1,3 +1,4 @@
+import { sendRequest } from "./client.js";
 import { run } from "./runner.js";
 
 function printHelp() {
@@ -135,26 +136,24 @@ Payload: 	~${config.payload} bytes`);
 
 		const startTime = performance.now();
 
-		console.groupCollapsed("Requests");
-
-		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); //testing
-		let requestNumber = 0;
-
 		const results = await run({
 			totalRequests: config.requests,
 			concurrency: config.concurrency,
 			task: async () => {
-				await delay(100); // 10 requests should run for about 1 second
-				console.count("Request");
-				return requestNumber++;
+				const payload = ":3"; //testing
+
+				return sendRequest({
+					url,
+					apiKey: config.apiKey,
+					payload,
+				});
 			},
 		});
-		console.groupEnd("Requests");
 
 		const durationTime = performance.now() - startTime;
 
-		console.dir(results);
 		console.log(durationTime);
+		console.dir(results);
 	} catch (error) {
 		console.error(`Error: ${error.message}`);
 		console.error(`Use --help to see how to use.`);

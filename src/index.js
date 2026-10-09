@@ -25,6 +25,19 @@ function parseArgs(args) {
 			printHelp();
 			process.exit(0);
 		}
+
+		if (!arg.startsWith("--")) {
+			throw new Error(`Unknown argument ${arg}`);
+		}
+
+		const key = arg.slice(2);
+		const value = args[++i];
+
+		if (value.startsWith("--")) {
+			throw new Error(`Missing value for --${key}`);
+		}
+
+		options[key] = value;
 	}
 
 	return options;

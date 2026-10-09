@@ -25,6 +25,7 @@ export function createPayload(requestNumber, size) {
 	const contentSize = Math.max(0, size - baseSize - 2);
 
 	payload.content = "x".repeat(contentSize);
+	// I tested this and ye it aproximates by ±2 bytes
 
 	return payload;
 }

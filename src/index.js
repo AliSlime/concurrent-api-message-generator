@@ -69,7 +69,7 @@ function validateArgs(options) {
 	const recomended = {
 		requests: 1,
 		concurrency: 1,
-		port: 4000,
+		port: 3000,
 		payload: 1024,
 	};
 
@@ -165,15 +165,6 @@ HTTP Statuses
 			console.log(`${status}:		${statusCounts[status]}`);
 		}
 	}
-
-	console.log(`
-Configuration
--------------------------------
-Target:       http://localhost:${config.port}${config.endpoint}
-Requests:     ${config.requests}
-Concurrency:  ${config.concurrency}
-Payload:      ~${config.payload} bytes
-`);
 }
 
 async function main() {

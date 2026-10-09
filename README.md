@@ -15,7 +15,7 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/AliSlime/concurrent-api-message-generator.git
-cd message-generator
+cd concurrent-api-message-generator
 ```
 
 No additional dependencies are required.

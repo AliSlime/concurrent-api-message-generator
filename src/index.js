@@ -1,3 +1,5 @@
+import { run } from "./runner.js";
+
 function printHelp() {
 	console.log(`
 Message Generator
@@ -116,7 +118,7 @@ function validateArgs(options) {
 	};
 }
 
-function main() {
+async function main() {
 	try {
 		const options = parseArgs(process.argv.slice(2));
 		const config = validateArgs(options);
@@ -130,6 +132,29 @@ Target:		${url}
 Requests:	${config.requests}
 Concurrency:	${config.concurrency}
 Payload: 	~${config.payload} bytes`);
+
+		const startTime = performance.now();
+
+		console.groupCollapsed("Requests");
+
+		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); //testing
+		let requestNumber = 0;
+
+		const results = await run({
+			totalRequests: config.requests,
+			conscurrency: config.concurrency,
+			task: async () => {
+				await delay(100); // 10 requests should run for about 1 second
+				console.count("Request");
+				return requestNumber++;
+			},
+		});
+		console.groupEnd("Requests");
+
+		const durationTime = performance.now() - startTime;
+
+		console.dir(results);
+		console.log(durationTime);
 	} catch (error) {
 		console.error(`Error: ${error.message}`);
 		console.error(`Use --help to see how to use.`);
